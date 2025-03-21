@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Page</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+            padding: 0 20px; /* Add some padding to prevent text from touching the sides */
+            margin-bottom: 40px; /* Add space at the bottom */
+        }
+
+        h1, h2 {
+            font-size: 2em;
+        }
+
+        h3 {
+            font-size: 1.5em;
+            color: green;
+        }
+
+        /* Styling for the price and instructions */
+        #product-info {
+            margin-top: 20px;
+        }
+
+        .payment-message {
+            font-size: 18px;
+            color: #333;
+            margin-top: 20px;
+        }
+
+        /* QR Code Styling */
+        #qr-code {
+            margin-top: 30px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            background-image: url('your-background-image.jpg'); /* Add background image here */
+            background-size: cover; /* Ensure the background covers the entire container */
+            background-position: center; /* Center the background */
+            width: 220px; /* Increase the width to accommodate the background */
+            height: 220px; /* Height to match the QR code size */
+            padding: 10px; /* Space between the background and the QR code */
+            border-radius: 10px; /* Rounded corners */
+        }
+
+        #qr-code img {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+        }
+
+        /* Show message box */
+        .message-box {
+            display: none;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+
+        /* WhatsApp Button */
+        .whatsapp-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #25D366;
+            color: white;
+            font-size: 18px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .whatsapp-button i {
+            margin-right: 8px;
+        }
+
+        /* Button for filling details */
+        .fill-details-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 18px;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Black with opacity */
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 50%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Copy Button */
+        .copy-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 15px;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5em;
+            }
+
+            h2 {
+                font-size: 1.2em;
+            }
+
+            h3 {
+                font-size: 1.2em;
+            }
+
+            .payment-message {
+                font-size: 16px;
+            }
+
+            #qr-code {
+                width: 80%; /* Make the QR code smaller for mobile */
+                max-width: 250px; /* Set a max width to avoid too large QR codes */
+            }
+
+            #product-info p {
+                font-size: 1.2em;
+            }
+
+            .modal-content {
+                width: 80%; /* Make the modal smaller on mobile */
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Product Payment</h1>
+    <h2>Pay for Your Product</h2>
+
+    <!-- Display the price -->
+    <div id="product-info">
+        <p>Product Price: <span id="product-price">0</span></p>
+    </div>
+
+    <!-- Message to scan and pay -->
+    <div class="message-box" id="message-box">
+        Please scan the QR code below to proceed with the payment. Make sure to pay the exact amount displayed.
+    </div>
+
+    <!-- Display your custom QR image with background -->
+    <div id="qr-code">
+        <img src="Qr.jpeg" alt="QR Code for Payment">
+    </div>
+
+    <h3>Scan the QR code to make payment</h3>
+
+    <!-- WhatsApp Button -->
+    <a href="https://wa.me/9810936342?text=Hello%2C%20I%20would%20like%20to%20make%20a%20payment" class="whatsapp-button" target="_blank">
+        <i class="fab fa-whatsapp"></i> Share Payment Screenshot with us on WhatsApp
+    </a>
+
+    <!-- Fill Details Button -->
+    <button class="fill-details-button" id="fillDetailsButton">Fill Details</button>
+
+    <!-- The Modal for filling details -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <h2>Fill Your Details</h2>
+            <form id="detailsForm">
+                <label for="address">Complete Address:</label><br>
+                <input type="text" id="address" name="address" required><br><br>
+
+                <label for="pincode">Pincode:</label><br>
+                <input type="text" id="pincode" name="pincode" required><br><br>
+
+                <label for="mobile">Mobile Number:</label><br>
+                <input type="text" id="mobile" name="mobile" required><br><br>
+
+                <button type="button" class="copy-button" id="copyDetailsButton">Copy Details</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Get price from localStorage
+        const price = localStorage.getItem('productPrice');
+
+        // If price is available, show it
+        if (price) {
+            document.getElementById('product-price').innerText = price;
+        } else {
+            alert("No product found for payment.");
+        }
+
+        // Show the message box
+        function showMessage() {
+            const messageBox = document.getElementById('message-box');
+            messageBox.style.display = 'block'; // Show the message box
+
+            // Hide the message box after 5 seconds
+            setTimeout(function() {
+                messageBox.style.display = 'none';
+            }, 5000); // 5000 milliseconds = 5 seconds
+        }
+
+        // Trigger the message box after the page loads
+        window.onload = function() {
+            showMessage();
+        };
+
+        // Get modal and button references
+        var modal = document.getElementById("myModal");
+        var btn = document.getElementById("fillDetailsButton");
+        var span = document.getElementById("closeModal");
+
+        // Open the modal when the user clicks the "Fill Details" button
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+
+        // Close the modal when the user clicks the "X"
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // Close the modal if the user clicks outside of the modal
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Handle the form submission
+        document.getElementById("detailsForm").onsubmit = function(event) {
+            event.preventDefault();
+            // Collect the details and handle as needed
+            alert("Details submitted!");
+            modal.style.display = "none"; // Close the modal after submission
+        }
+
+        // Function to copy all details to clipboard
+        document.getElementById("copyDetailsButton").onclick = function() {
+            var address = document.getElementById("address").value;
+            var pincode = document.getElementById("pincode").value;
+            var mobile = document.getElementById("mobile").value;
+
+            var details = `Complete Address: ${address}\nPincode: ${pincode}\nMobile Number: ${mobile}`;
+
+            // Create a temporary textarea element to hold the details
+            var tempTextArea = document.createElement("textarea");
+            tempTextArea.value = details;
+            document.body.appendChild(tempTextArea);
+
+            tempTextArea.select();
+            document.execCommand("copy");
+
+            // Remove the temporary textarea element
+            document.body.removeChild(tempTextArea);
+
+            alert("Details copied to clipboard! You can now paste them in WhatsApp.");
+        };
+    </script>
+</body>
+</html>
